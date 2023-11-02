@@ -1,11 +1,5 @@
-import { sql } from "drizzle-orm";
-import {
-  text,
-  blob,
-  integer,
-  sqliteTable,
-  real,
-} from "drizzle-orm/sqlite-core";
+import { integer, real, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
 export const customer = sqliteTable("customer", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -16,6 +10,9 @@ export const customer = sqliteTable("customer", {
   monthly_salary: integer("monthly_salary", { mode: "number" }),
   approved_limit: integer("approved_limit", { mode: "number" }),
 });
+
+export const customerInsertSchema = createInsertSchema(customer);
+export const customerSelectSchema = createSelectSchema(customer);
 
 export const loan = sqliteTable("loan", {
   id: integer("id", { mode: "number" }).primaryKey({ autoIncrement: true }),
@@ -30,3 +27,6 @@ export const loan = sqliteTable("loan", {
   start_date: integer("start_date", { mode: "timestamp_ms" }),
   end_date: integer("end_date", { mode: "timestamp_ms" }),
 });
+
+export const loanInsertSchema = createInsertSchema(loan);
+export const loanSelectSchema = createSelectSchema(loan);

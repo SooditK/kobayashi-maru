@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import morgan from "morgan";
+import router from "./router/index.js";
 
 const app = express();
 
@@ -18,10 +19,7 @@ app.use(
   })
 );
 app.use(cookieParser());
-
-app.get("/", (req, res) => {
-  res.json({ message: "Hello World!" });
-});
+app.use("/api", router);
 
 app.listen(parseInt(process.env["PORT"] ?? "8080"), () => {
   console.log(`Server listening on port ${process.env["PORT"] ?? "8080"}`);

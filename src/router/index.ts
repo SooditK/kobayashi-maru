@@ -307,11 +307,11 @@ router.post("/make-payment/:customer_id/:loan_id", async (req, res) => {
         .from(customer)
         .where(eq(customer.id, customer_id))
         .execute();
-      if (c && l.emi_paid_on_time) {
+      if (c) {
         const [updated_loan] = await db
           .update(loan)
           .set({
-            emi_paid_on_time: l.emi_paid_on_time + 1,
+            emi_paid_on_time: l.emi_paid_on_time ? l.emi_paid_on_time + 1 : 1,
           })
           .where(eq(loan.id, loan_id))
           .returning()
@@ -348,7 +348,16 @@ router.get("/view-statement/:customer_id/:loan_id", async (req, res) => {
         .where(eq(customer.id, customer_id))
         .execute();
       if (c) {
-        res.json(l);
+        const response = {
+          customer_id,
+          loan_id,
+          principal: l.loan_amount,
+          interest_rate: l.interest_rate,
+          amount_paid: l.monthly_payment! * l.emi_paid_on_time!,
+          monthly_installment: l.monthly_payment,
+          repayments_left: l.tenure! - l.emi_paid_on_time!,
+        };
+        res.json(response);
       } else {
         res.status(400).json({ message: "Customer not found" });
       }
